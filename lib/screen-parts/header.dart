@@ -1,4 +1,8 @@
+import 'package:alupco/screens/PendingOrders.dart';
+import 'package:alupco/screens/home-screen.dart';
+import 'package:alupco/screens/make-order.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Header extends StatelessWidget {
   Widget body;
@@ -18,18 +22,29 @@ class Header extends StatelessWidget {
 
             // go to search item screen
             ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "/");
-                },
-                child: const Text("Search Item")),
+              onPressed: () {
+                Get.to(HomeScreen());
+              },
+              child: const Text("Search Item"),
+            ),
             const SizedBox(height: 30.00),
 
             // go to make order screen
             ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "/make-order");
-                },
-                child: const Text("Make-Order")),
+              onPressed: () {
+                Get.to(MakeOrder());
+              },
+              child: const Text("Make-Order"),
+            ),
+            const SizedBox(height: 30.00),
+
+            // go to pending orders screen
+            ElevatedButton(
+              onPressed: () {
+                Get.to(PendingOrders());
+              },
+              child: const Text("Pending-Orders"),
+            ),
           ]),
         ),
       ),
