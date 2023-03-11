@@ -12,9 +12,13 @@ class PendingOrders extends StatelessWidget {
 
   late PendingOrdersState logic;
 
+  late ScrollController _controller;
+
+  int cardItemIndex = 0;
+
   PendingOrders() {
     logic = Get.put(PendingOrdersState());
-
+    _controller = ScrollController();
     logic.getItems();
   }
 
@@ -23,107 +27,122 @@ class PendingOrders extends StatelessWidget {
     return Header(
       body: Obx(
         () {
-          print(logic.data.length);
+          //
           return logic.loading == true
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  child: itemsBuilder(),
-                );
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(child: itemsBuilder());
         },
       ),
     );
   }
 
-  Widget item({required int index}) {
-    // int orderID = logic.items[0]["order_id"];
+  Widget itemsBuilder() {
+    List<Widget> items = [];
+// logic.data.length
+    for (var i = 0; i < logic.data.length; i++) {
+      items.add(CardItem(i));
+    }
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: items,
+    );
+  }
 
-    List items;
-    List<Widget> uiItems = [];
+  Widget CardItem(int i) {
+    //
+    List items = jsonDecode(logic.data[i]["data"]);
 
-    var length = jsonDecode(logic.data[index]["data"]);
+    //
+    int orderID = jsonDecode(logic.data[i]["id"]);
 
-    uiItems.add(cardHeader(index));
+    //
+    cardItemIndex = 1;
 
-    for (var element in length) {
-      print(element["item_code"]);
-      uiItems.add(cardBody(element));
+    //
+    List<DataColumn> dataColumn = const [
+      DataColumn(label: Text("#")),
+      DataColumn(label: Text("Item-Code")),
+      DataColumn(label: Text("Unit")),
+      DataColumn(label: Text("Required QTY")),
+      DataColumn(label: Text("Prepared QTY")),
+      DataColumn(label: Text("In Stock QTY")),
+      DataColumn(label: Text("Location")),
+    ];
+
+    //
+    List<DataRow> row = [];
+
+    for (var item in items) {
+      row.add(DataRow(cells: [
+        DataCell(Text(cardItemIndex.toString())),
+        DataCell(Text(item["item_code"])),
+        DataCell(Text(item["item_unit"])),
+        DataCell(Text(item["required_qty"])),
+        DataCell(Text(item["prepared_qty"])),
+        DataCell(Text(item["in_stock_qty"])),
+        DataCell(Text(item["item_stock_location"])),
+      ]));
+
+      //
+      cardItemIndex++;
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 15.00),
+      margin: const EdgeInsets.only(bottom: 15.00, left: 10.00, right: 10.00),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(children: uiItems),
+          padding: const EdgeInsets.all(8.00),
+          child: Column(
+            children: [
+              cardButtons(orderID, items),
+              DataTable(columns: dataColumn, rows: row),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget cardHeader(index) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text("SQ # "),
-      Row(children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          onPressed: () {},
-          child: const Text("Confirm", style: TextStyle(color: Colors.black)),
-        ),
-        const SizedBox(
-          width: 20.00,
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.yellowAccent),
-          onPressed: () {},
-          child: const Text("Edit", style: TextStyle(color: Colors.black)),
-        ),
-        const SizedBox(
-          width: 20.00,
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          onPressed: () {},
-          child: const Text("Delete", style: TextStyle(color: Colors.black)),
-        ),
-        const SizedBox(
-          width: 20.00,
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-          onPressed: () {},
-          child: const Text("Print", style: TextStyle(color: Colors.white)),
-        ),
-      ]),
-    ]);
-  }
-
-  Widget cardBody(Map<String, dynamic> item) {
+  Widget cardButtons(orderID, var item) {
+    print("order id $orderID");
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Text("Item-Code: ${item["item_code"]}"),
+        Text("SQ # " + item[0]["order_id"]),
+        Row(children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            onPressed: () {},
+            child: const Text("Confirm", style: TextStyle(color: Colors.black)),
+          ),
+          const SizedBox(
+            width: 20.00,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+            onPressed: () {},
+            child: const Text("Edit", style: TextStyle(color: Colors.black)),
+          ),
+          const SizedBox(
+            width: 20.00,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {},
+            child: const Text("Delete", style: TextStyle(color: Colors.black)),
+          ),
+          const SizedBox(
+            width: 20.00,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+            onPressed: () {},
+            child: const Text("Print", style: TextStyle(color: Colors.white)),
+          ),
+        ]),
       ],
     );
   }
 
-  Widget itemsBuilder() {
-    List<Widget> items = [];
-
-    for (var i = 0; i < logic.data.length; i++) {
-      items.add(item(index: i));
-    }
-    return Column(
-      children: items,
-    );
-  }
   //
 }
-
-
-//  ListView.builder(
-//                   itemBuilder: (context, index) {
-//                     return ListView(
-//                       children: [items(index: index)],
-//                     );
-//                   },
-//                   itemCount: logic.data.length,
-//                 );

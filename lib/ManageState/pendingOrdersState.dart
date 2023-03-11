@@ -36,4 +36,9 @@ class PendingOrdersState extends GetxController {
 
     print(this.data.length);
   }
+
+  bool confirmOrder(int orderId) {
+    return false;
+  }
+  //
 }
