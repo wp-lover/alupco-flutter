@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-class PendingOrdersState extends GetxController {
-  String rootUrl = "https://alupco.writteninfo.com/wp-json/gsp/v1/";
+import '../Network/networking.dart';
+
+class PendingOrdersState extends GetxController with Networking {
+  // rootUrl this the root url of rest api
+
   RxList data = [].obs;
 
   RxList items = [].obs;
@@ -37,7 +40,42 @@ class PendingOrdersState extends GetxController {
     print(this.data.length);
   }
 
-  bool confirmOrder(int orderId) {
+  Future<bool> confirmOrder(int orderId) async {
+    //
+    http.Response response =
+        await http.get(Uri.parse("${rootUrl}confirm-order"), headers: {});
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> editOrder(int orderId) async {
+    //
+    http.Response response = await http.get(Uri.parse("${rootUrl}edit-order"));
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> deleteOrder(int orderId) async {
+    //
+    http.Response response =
+        await http.get(Uri.parse("${rootUrl}delete-order"));
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> print(int orderId) async {
     return false;
   }
   //

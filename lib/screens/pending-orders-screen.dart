@@ -1,13 +1,11 @@
 import 'dart:convert';
-import 'dart:math';
-import 'package:alupco/screen-parts/header.dart';
+import 'package:alupco/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../ManageState/pendingOrdersState.dart';
 
-class PendingOrders extends StatelessWidget {
+class PendingOrdersScreen extends StatelessWidget {
   //
 
   late PendingOrdersState logic;
@@ -104,7 +102,7 @@ class PendingOrders extends StatelessWidget {
   }
 
   Widget cardButtons(orderID, var item) {
-    print("order id $orderID");
+    //
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -112,7 +110,9 @@ class PendingOrders extends StatelessWidget {
         Row(children: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            onPressed: () {},
+            onPressed: () {
+              logic.confirmOrder(orderID);
+            },
             child: const Text("Confirm", style: TextStyle(color: Colors.black)),
           ),
           const SizedBox(
@@ -120,7 +120,9 @@ class PendingOrders extends StatelessWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
-            onPressed: () {},
+            onPressed: () {
+              logic.editOrder(orderID);
+            },
             child: const Text("Edit", style: TextStyle(color: Colors.black)),
           ),
           const SizedBox(
@@ -128,7 +130,9 @@ class PendingOrders extends StatelessWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {},
+            onPressed: () {
+              logic.deleteOrder(orderID);
+            },
             child: const Text("Delete", style: TextStyle(color: Colors.black)),
           ),
           const SizedBox(
@@ -136,7 +140,9 @@ class PendingOrders extends StatelessWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              logic.print(orderID);
+            },
             child: const Text("Print", style: TextStyle(color: Colors.white)),
           ),
         ]),
