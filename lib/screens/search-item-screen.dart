@@ -1,6 +1,9 @@
 import 'package:alupco/ManageState/search-item-state.dart';
+import 'package:alupco/widgets/MyState.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'package:get/get.dart';
 import '../Network/networking.dart';
 import '../widgets/header.dart';
 import '../widgets/ItemList.dart';
@@ -8,17 +11,15 @@ import '../widgets/ItemList.dart';
 class SearchItemScreen extends StatelessWidget {
   SearchItemScreen({super.key});
 
-  TextEditingController controller = TextEditingController();
+  TextEditingController _itemCode = TextEditingController();
 
   late SearchItemState logic;
-  late Networking net;
+
   @override
   Widget build(BuildContext context) {
     //
-    net = Networking();
-
     // initiaze the logic
-    logic = SearchItemState();
+    logic = Get.put(SearchItemState());
 
     // return the main widget
     return Header(
@@ -29,26 +30,36 @@ class SearchItemScreen extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(bottom: 30.00),
             child: TextField(
-              controller: controller,
+              controller: _itemCode,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 labelText: "Search Item",
                 suffixIcon: IconButton(
                   hoverColor: Colors.lightBlueAccent,
                   icon: const Icon(Icons.search_rounded),
-                  onPressed: () {
-                    logic.searchItems();
-                    // net.searchItems();
+                  onPressed: () async {
+                    print("calling...");
+                    var data =
+                        await logic.searchItems(itemCode: _itemCode.text);
+                    if (data != null) {
+                      logic.data = data["data"];
+                      logic.reBuildListItem();
+                      print(data["data"]);
+                    } else {
+                      print("got somethign");
+                    }
+                    print("end fun");
                   },
                 ),
               ),
             ),
           ),
-          Container(
-            child: Expanded(
-              child: ItemList(),
-            ),
-          )
+          Expanded(child: GetBuilder<SearchItemState>(builder: (_) {
+            return ItemList(
+              load: logic.hasData,
+              data: logic.data,
+            );
+          })),
         ]),
       ),
     );

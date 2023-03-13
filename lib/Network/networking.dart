@@ -7,6 +7,9 @@ class Networking {
 
   //
   String apiKey = "true";
+  Map<String, String> headers = {
+    "api_key": "9gw8dmpw@+6dCWK?d_e% &/+n_u&2Hj`g[cHA#eP@,Is6Jb6vv/z(+NK<:=.5Cw"
+  };
   //
   String rootUrl = "https://alupco.writteninfo.com/wp-json/gsp/v1/";
 
@@ -57,14 +60,18 @@ class Networking {
       serverStatus = false;
     }
 
-    http.Response response =
-        await http.get(Uri.parse("${rootUrl}search-items?api_key=1"));
+    http.Response response = await http.get(
+        Uri.parse(
+            "${rootUrl}search-items?item_code=$itemCode&item_name=$itemName&wh_name=$whName&api_key=1"),
+        headers: this.headers);
 
     if (response.statusCode == 200) {
       // if server response 200 code then should return the data
       serverStatus = true;
 
       var data = jsonDecode(response.body);
+
+      print("got the data");
 
       // return data as json formate
       return data;
